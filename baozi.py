@@ -189,17 +189,25 @@ def rule4(song_pz: list):
     return err
 
 
-def check_song(song: str, parser: Parser, yun: Yun):
-    song_l = song_list(song)
-    log(song_l)
-    song_pz_str = parser.parse(song)
-    song_pz = song_list(song_pz_str)
-    # song_pz = ['仄平仄仄平平仄', '仄仄平平仄仄平', '平仄中平中仄仄', '平平平仄中平平']
-    err = rule1(song_pz) + \
-        rule2(song_pz) + \
-        rule3(song_l, song_pz, yun) + \
-        rule4(song_pz)
-    return song_pz, err
+class Baozi:
+    def __init__(self):
+        self.parser = Parser()
+        self.yun = Yun()
+
+    def check_song(self, song: str):
+        parser = self.parser
+        yun = self.yun
+
+        song_l = song_list(song)
+        # log(song_l)
+        song_pz_str = parser.parse(song)
+        song_pz = song_list(song_pz_str)
+        # song_pz = ['仄平仄仄平平仄', '仄仄平平仄仄平', '平仄中平中仄仄', '平平平仄中平平']
+        err = rule1(song_pz) + \
+            rule2(song_pz) + \
+            rule3(song_l, song_pz, yun) + \
+            rule4(song_pz)
+        return song_pz, err
 
 
 if __name__ == '__main__':
@@ -218,8 +226,5 @@ if __name__ == '__main__':
     脫貂貰桂醑，射雁與山廚。
     聞道高陽會，愚公谷正愚。'''
     song = song1
-    parser = Parser()
-    yun = Yun()
-    # log(song)
-    # log(song_pz)
-    log(check_song(song, parser, yun))
+    bz = Baozi()
+    log(bz.check_song(song))

@@ -1,0 +1,14 @@
+.mid {
+    margin: 0 auto;
+    width: 1000px;
+}
+
+#id-textarea-input {
+
+}
+
+.show {
+    /*width: 100px;
+    height: 100px;*/
+    outline: 1px solid lightblue;
+}
