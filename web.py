@@ -1,3 +1,4 @@
+import sys
 import baozi
 from flask import Flask, send_file, request, jsonify
 from gevent.wsgi import WSGIServer
@@ -22,5 +23,8 @@ def index():
     return send_file('static/index.html')
 
 
-app.run(debug=True)
-# WSGIServer(('', 8082), app).serve_forever()
+if __name__ == '__main__':
+    if len(sys.argv) > 1:
+        app.run(debug=True)
+    else:
+        WSGIServer(('', 8082), app).serve_forever()

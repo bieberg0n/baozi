@@ -83,14 +83,18 @@ def song_list(song: str) -> list:
     return s
 
 
-def same_line(line_pz: str, pingze: str) -> bool:
-    line_pz_len = len(line_pz)
-    if line_pz_len < len(pingze):
-        pingze = pingze[-line_pz_len:]
+def same_line(line_pz: str, pingze: str, force: bool=True) -> bool:
+    # line_pz_len = len(line_pz)
+    # if line_pz_len < len(pingze):
+    pingze = pingze[-len(line_pz):]
 
     for i, char in enumerate(line_pz):
-        if (pingze[i] != '中') and (char != pingze[i]):
-            return False
+        if force:
+            if (pingze[i] != '中') and (char != pingze[i]):
+                return False
+        else:
+            if (char != '中') and (pingze[i] != '中') and (char != pingze[i]):
+                return False
     else:
         return True
 
@@ -118,12 +122,7 @@ def rule1(song: list):
     err = []
     for index, line in enumerate(song):
         o = oushuzi(line)
-        if same_line(line, '中仄中平仄平仄'):
-            ...
-        elif same_line(line, '中平中仄中仄仄') and \
-                same_line(song[index+1], '中仄中平平仄平'):
-            ...
-        elif '平平' in o or '仄仄' in o:
+        if '平平' in o or '仄仄' in o:
             err.append(format('rule1 error: 句内 偶数字（2、4、6）之间平仄未相反. line',
                        index+1))
 
@@ -192,6 +191,21 @@ def rule4(song_pz: list):
     return err
 
 
+def spec_pz(song_pz: list):
+    tmp_song_pz = []
+    for i, line in enumerate(song_pz):
+        if same_line(line, '中仄中平仄平仄', force=False):
+            # log('spec1,')
+            tmp_song_pz.append('中仄平平平仄仄'[-len(line):])
+        elif same_line(line, '中平中仄中仄仄', force=False) and \
+                same_line(song_pz[i+1], '中仄中平平仄平', force=False):
+            tmp_song_pz.append('中平中仄中平仄'[-len(line):])
+        else:
+            tmp_song_pz.append(line)
+
+    return tmp_song_pz
+
+
 class Baozi:
     def __init__(self):
         self.parser = Parser()
@@ -203,7 +217,8 @@ class Baozi:
 
         song_l = song_list(song)
         song_pz_str = parser.parse(song)
-        song_pz = song_list(song_pz_str)
+        song_pz_bak = song_list(song_pz_str)
+        song_pz = spec_pz(song_pz_bak)
         # song_pz = ['仄平仄仄平平仄', '仄仄平平仄仄平', '平仄中平中仄仄', '平平平仄中平平']
 
         err = rule1(song_pz)
@@ -213,7 +228,7 @@ class Baozi:
         err.extend(rule4(song_pz))
 
         return dict(
-            song_pz=song_pz,
+            song_pz=song_pz_bak,
             tail_yuns=tail_yuns,
             err=err
         )
@@ -234,6 +249,7 @@ if __name__ == '__main__':
     錦石稱貞女，青松學大夫。
     脫貂貰桂醑，射雁與山廚。
     聞道高陽會，愚公谷正愚。'''
-    song = song2
+    song4 = '江边踏青罢，回首见旌旗。风起春城暮，高楼鼓角悲。'
+    song = song4
     bz = Baozi()
     log(bz.check_song(song))
