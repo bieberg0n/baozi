@@ -12,3 +12,16 @@
     height: 100px;*/
     outline: 1px solid lightblue;
 }
+
+.song {
+    outline: 1px solid red;
+    display: inline-block;
+}
+
+.song+.song {
+    margin-left: 20px;
+}
+
+.err {
+    margin-top: 15px;
+}

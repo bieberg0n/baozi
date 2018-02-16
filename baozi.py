@@ -34,20 +34,23 @@ class Yun:
     def check_tail(self, song: list):
         err = []
         y = None
+        tail_yuns = []
         for i, line in enumerate(song):
             if i % 2 != 0:
                 # 对句
                 if not y:
                     y = self.yun_from_char(line[-1])
+                    tail_yuns.append(y)
                 else:
                     tail_yun = self.yun_from_char(line[-1])
+                    tail_yuns.append(tail_yun)
                     # log(y, line, tail_yun)
                     if [i for i in tail_yun if i in y] == []:
                         # 韵部不同
                         err.append(format('rule3 error: 句尾韵部不同. line',
                                           i+1, line, y, tail_yun))
 
-        return err
+        return tail_yuns, err
 
 
 class Parser:
@@ -163,7 +166,7 @@ def rule2(song: list):
 def rule3(song: list, song_pz: list, yun: Yun):
     # 检测句末最后一个字是否在同一韵部（提供给你的平水韵），偶数句最后一个字都在同一韵部，
     # 奇数句除第一句外（因为第一句可以押韵也可以不押韵）的最后一个字的平仄与偶数句最后一个字的平仄相反，则合律。
-    err = yun.check_tail(song)
+    tail_yuns, err = yun.check_tail(song)
 
     for i, line in enumerate(song_pz):
         if i == 0 or i == 1:
@@ -176,7 +179,7 @@ def rule3(song: list, song_pz: list, yun: Yun):
                 err.append(format('rule3-2 error: 奇数句除第一句外的最后一个字的平仄\
 与偶数句最后一个字的平仄未相反. line', i+1, line))
 
-    return err
+    return tail_yuns, err
 
 
 def rule4(song_pz: list):
@@ -199,15 +202,21 @@ class Baozi:
         yun = self.yun
 
         song_l = song_list(song)
-        # log(song_l)
         song_pz_str = parser.parse(song)
         song_pz = song_list(song_pz_str)
         # song_pz = ['仄平仄仄平平仄', '仄仄平平仄仄平', '平仄中平中仄仄', '平平平仄中平平']
-        err = rule1(song_pz) + \
-            rule2(song_pz) + \
-            rule3(song_l, song_pz, yun) + \
-            rule4(song_pz)
-        return song_pz, err
+
+        err = rule1(song_pz)
+        err.extend(rule2(song_pz))
+        tail_yuns, err3 = rule3(song_l, song_pz, yun)
+        err.extend(err3)
+        err.extend(rule4(song_pz))
+
+        return dict(
+            song_pz=song_pz,
+            tail_yuns=tail_yuns,
+            err=err
+        )
 
 
 if __name__ == '__main__':
@@ -225,6 +234,6 @@ if __name__ == '__main__':
     錦石稱貞女，青松學大夫。
     脫貂貰桂醑，射雁與山廚。
     聞道高陽會，愚公谷正愚。'''
-    song = song1
+    song = song2
     bz = Baozi()
     log(bz.check_song(song))
