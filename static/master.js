@@ -81,7 +81,7 @@ const insertSongs = function(songs, resp) {
 
 const query = function() {
     const textarea = document.querySelector('#id-textarea-input')
-    const songs = textarea.value.split('\n\n')
+    const songs = textarea.value.split('\n\n').filter(song => song != '')
     const data = songs.map(function(song){
         return {song: song}
     })
