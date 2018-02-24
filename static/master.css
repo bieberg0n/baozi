@@ -7,10 +7,17 @@
 
 }
 
-.show {
-    /*width: 100px;
-    height: 100px;*/
+.showarea {
+    /*outline: 1px solid lightblue;*/
+}
+
+.showsong {
     outline: 1px solid lightblue;
+    margin-top: 20px;
+}
+
+.hided {
+    display: none;
 }
 
 .song {
@@ -24,4 +31,13 @@
 
 .err {
     margin-top: 15px;
+}
+
+.yun {
+    display: inline-block;
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    outline: 1px solid lightblue;
+    background-color: lightyellow;
 }

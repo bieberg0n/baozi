@@ -2,13 +2,7 @@
 from pprint import pprint
 import re
 import json
-
-
-def log(*args):
-    if len(args) == 1:
-        pprint(*args)
-    else:
-        print(*args)
+from utils import log
 
 
 def parse(line: str, yun: dict, pingze: dict):
