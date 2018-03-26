@@ -13,7 +13,7 @@ const errType = function(errs) {
 }
 
 const prevDeal = function(song, resp) {
-    const songStr = song.replace(/。/g, '。<br />')
+    const songStr = song.replace(/([^。])\n/g, '$1\n<br />').replace(/。/g, '。<br />')
     const tailYunsRev = resp.tail_yuns.reverse()
     const songPZArr = resp.song_pz
 
@@ -79,9 +79,20 @@ const insertSongs = function(songs, resp) {
     songs.forEach((song, i) => insertSong(song, results[i], showDiv))
 }
 
+const song_without_title = function(songStr) {
+    const re = /[。，]/
+    const song = songStr.split('\n').filter(s => re.test(s))
+    // log(song)
+    return song.join('\n')
+}
+
 const query = function() {
     const textarea = document.querySelector('#id-textarea-input')
-    const songs = textarea.value.split('\n\n').filter(song => song != '')
+    const songs_with_title = textarea.value
+        .split('\n\n')
+        .filter(song => song != '')
+    const songs = songs_with_title.map(song_without_title)
+
     const data = songs.map(function(song){
         return {song: song}
     })
@@ -90,7 +101,7 @@ const query = function() {
         'POST',
         '/query',
         dataStr,
-        resp => insertSongs(songs, resp)
+        resp => insertSongs(songs_with_title, resp)
     )
 }
 

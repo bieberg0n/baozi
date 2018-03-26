@@ -2,7 +2,7 @@ import sys
 import baozi
 from flask import Flask, send_file, request, jsonify
 from gevent.wsgi import WSGIServer
-from utils import log
+# from utils import log
 
 
 app = Flask(__name__)
